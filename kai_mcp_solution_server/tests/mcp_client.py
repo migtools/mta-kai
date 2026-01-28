@@ -60,8 +60,15 @@ async def _run_create_incident(client: Client, client_id: str) -> int:
     try:
         result = await client.call_tool("create_incident", request)
 
-        # fastmcp returns list of TextContent objects
-        incident_id = int(result[0].text) if result else None
+        # FastMCP 2.14+ returns CallToolResult with content attribute
+        # This is the standard MCP protocol format
+        # Handle both CallToolResult and direct list response
+        if hasattr(result, "content"):
+            incident_id = int(result.content[0].text) if result.content else None
+        elif isinstance(result, list):
+            incident_id = int(result[0].text) if result else None
+        else:
+            incident_id = None
 
         if incident_id is None:
             raise ValueError("Incident ID is None, check server response")
@@ -148,7 +155,13 @@ public class ExampleService {
         result = await client.call_tool("create_solution", request)
 
         # fastmcp returns list of TextContent objects
-        solution_id = int(result[0].text) if result else None
+        # Handle both CallToolResult and direct list response
+        if hasattr(result, "content"):
+            solution_id = int(result.content[0].text) if result.content else None
+        elif isinstance(result, list):
+            solution_id = int(result[0].text) if result else None
+        else:
+            solution_id = None
 
         if solution_id is None:
             raise ValueError("Solution ID is None, check server response")
