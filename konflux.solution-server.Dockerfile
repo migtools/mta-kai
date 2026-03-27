@@ -1,4 +1,4 @@
-#FROM registry.redhat.io/ubi9:latest AS deps
+#FROM registry.redhat.io/ubi10:latest AS deps
 #WORKDIR /workspace/
 #ADD . .
 #RUN pwd && ls -la
@@ -8,8 +8,8 @@
 #RUN cd hermeto-output/deps/pip/ && tar zxvf tree-sitter-0.24.0.tar.gz
 
 # Arrow C++ libs are a pyarrow req (Added for 08/22/25 deps bundle)
-#@follow_tag(registry.redhat.io/ubi9:latest)
-#FROM registry.redhat.io/ubi9:9.6-1758184894 AS arrow-builder
+#@follow_tag(registry.redhat.io/ubi10:latest)
+#FROM registry.redhat.io/ubi10:9.6-1758184894 AS arrow-builder
 #COPY --chown=1001:0 $REMOTE_SOURCES $REMOTE_SOURCES_DIR
 #WORKDIR $REMOTE_SOURCES_DIR/mta-arrow/app/cpp
 #ADD . .
@@ -27,11 +27,11 @@
 #RUN tar -czf arrow-devel.tar.gz -C /tmp/arrow-devel .
 #RUN rm -rf /tmp/arrow-devel
 
-FROM registry.redhat.io/ubi9:latest AS app
+FROM registry.redhat.io/ubi10:latest AS app
 COPY --chown=1001:0 . /workspace
 WORKDIR /workspace
 
-FROM registry.redhat.io/ubi9/ubi:latest
+FROM registry.redhat.io/ubi10/ubi:latest
 
 WORKDIR /app
 RUN mkdir -p /data/

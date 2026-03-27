@@ -1,4 +1,4 @@
-FROM registry.redhat.io/ubi9/go-toolset:1.23 AS builder
+FROM registry.redhat.io/ubi10/go-toolset:1.23 AS builder
 COPY --chown=1001:0 . /workspace
 
 # kai_analyzer_rpc does not have a Dockerfile upstream, downstream uses this container as a builder only
@@ -9,7 +9,7 @@ RUN GOOS=linux go build -o mta-analyzer-rpc
 RUN GOOS=darwin go build -o darwin-mta-analyzer-rpc
 RUN GOOS=windows go build -o windows-mta-analyzer-rpc
 
-FROM registry.redhat.io/ubi9:latest
+FROM registry.redhat.io/ubi10:latest
 
 COPY --from=builder /workspace/kai_analyzer_rpc/mta-analyzer-rpc /usr/local/bin
 COPY --from=builder /workspace/kai_analyzer_rpc/darwin-mta-analyzer-rpc /usr/local/bin
