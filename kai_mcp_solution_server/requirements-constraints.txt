@@ -1,0 +1,17 @@
+# Runtime constraints for packages whose latest release ships wheels only.
+# Hermeto builds from source, and pybuild-deps fetches an sdist for every
+# package in requirements.txt to read its build metadata, so a wheel-only
+# release fails the build outright:
+#
+#   PyPI doesn't have the source code for package cronsim==2.7
+#
+# These pins hold the resolution at the last release carrying an sdist.
+# Consumed by ../scripts/post-sync.sh via `uv pip compile -c`. Its sibling
+# requirements-build-constraints.txt does the same job one level down, for
+# build dependencies that never appear in requirements.txt.
+#
+# Drop a pin here once the project publishes an sdist again.
+
+# cronsim 2.7 is wheel-only; 2.6 is the newest with an sdist. Pulled in
+# transitively by pydocket, which arrived with fastmcp 2.14.7.
+cronsim<2.7
