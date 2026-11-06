@@ -81,7 +81,15 @@ RUN sed -i '/\[build-system\]/{N;N;N;d}' kai_mcp_solution_server/pyproject.toml
 # https://github.com/hermetoproject/hermeto/issues/983
 # https://github.com/hermetoproject/hermeto/issues/984
 
-RUN pip3.12 install --no-cache-dir ./kai_mcp_solution_server
+# Install from the pinned, lockfile-derived requirements.txt so the image uses
+# exactly the versions CI tests, then install the project itself without
+# re-resolving. Installing from pyproject.toml directly resolves fresh against
+# unbounded floors and can silently pick up a breaking major version, or drop a
+# dependency that is only pulled in via an extra (e.g. sqlalchemy[asyncio] ->
+# greenlet). Both installs use --no-deps because requirements.txt is a complete
+# closure and pip would otherwise re-resolve extras away from the pins.
+RUN pip3.12 install --no-cache-dir --no-deps -r kai_mcp_solution_server/requirements.txt
+RUN pip3.12 install --no-cache-dir --no-deps ./kai_mcp_solution_server
 
 # Clean up deps
 #RUN rm -rf hermeto-output/ && rm -rf arrow-devel.tar.gz && rm -rf geos-*
